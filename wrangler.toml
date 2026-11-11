@@ -1,0 +1,23 @@
+name = "redtf-share"
+main = "src/cloudflare.ts"
+compatibility_date = "2024-03-20"
+
+# Домен привязывается при деплое. У форка замените s.redtf.org на свой (или удалите блок
+# и привяжите домен в дашборде: Workers & Pages → Settings → Domains & Routes).
+routes = [{ pattern = "s.redtf.org", custom_domain = true }]
+
+# Логи воркера: по ним видно, если DTF начал отвечать ошибками или блокировать запросы.
+[observability]
+enabled = true
+
+# Переменные из этого файла при каждом деплое перезаписывают те, что заданы в дашборде.
+# Остальные настройки (SITE_NAME, CACHE_TTL…) см. в README.
+[vars]
+TARGET_ORIGIN = "https://redtf.org"
+
+# Общий лимит на запросы воркера к API DTF (по промаху кэша), чтобы DTF не заблокировал воркер.
+# Счётчик ведётся отдельно в каждом дата-центре Cloudflare. Сверх лимита боты получают 429.
+[[ratelimits]]
+name = "DTF_LIMITER"
+namespace_id = "1001"
+simple = { limit = 60, period = 60 }
