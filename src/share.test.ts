@@ -265,11 +265,13 @@ describe("handleRequest", () => {
 		const html = await res.text();
 		assert.ok(html.includes("<title>Тест &amp; &lt;заголовок&gt; — reDTF</title>"));
 		assert.ok(html.includes(`<meta property="og:image" content="${imageUrl(UUID)}">`));
-		// og:url остаётся на шлюзе, а ссылка и refresh ведут на клиент
+		// og:url остаётся на шлюзе, а canonical и ссылка ведут на клиент
 		assert.ok(html.includes('<meta property="og:url" content="https://s.redtf.org/post/5394366">'));
 		assert.ok(html.includes('<link rel="canonical" href="https://redtf.org/post/5394366">'));
 		assert.ok(html.includes('<meta name="twitter:card" content="summary_large_image">'));
-		assert.ok(html.includes('<meta http-equiv="refresh" content="0; url=https://redtf.org/post/5394366">'));
+		assert.ok(html.includes('<a href="https://redtf.org/post/5394366">'));
+		// автоперехода нет: Telegram идёт по нему на целевой сайт (404 у GitHub Pages) и не строит карточку
+		assert.ok(!html.includes("http-equiv"));
 	});
 
 	it("?preview=1 отдаёт HTML и обычному браузеру", async () => {

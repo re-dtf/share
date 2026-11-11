@@ -177,7 +177,9 @@ export function extractPostMetadata(post: DtfPost, config: ShareConfig): Meta {
 }
 
 /**
- * `canonicalUrl` — страница на целевом сайте (куда ведут ссылка и refresh).
+ * `canonicalUrl` — страница на целевом сайте (куда ведёт ссылка).
+ * Автоперехода (`meta refresh`) нет намеренно: боты, например Telegram, идут по нему на целевой сайт,
+ * а он на GitHub Pages отвечает 404 для адресов SPA, и карточка не строится. Людей перенаправляет 302.
  * `ogUrl` — адрес самого шлюза: краулеры, которые идут по `og:url`, должны остаться на нём,
  * а не уйти на SPA без тегов. По умолчанию совпадает с `canonicalUrl`.
  */
@@ -208,7 +210,6 @@ export function renderHtmlPage(params: Meta & { canonicalUrl: string; siteName: 
   <meta name="twitter:title" content="${eTitle}">
   <meta name="twitter:description" content="${eDesc}">
   <meta name="twitter:image" content="${eImage}">
-  <meta http-equiv="refresh" content="0; url=${eUrl}">
 </head>
 <body>
   <p><a href="${eUrl}">Открыть в ${eSiteName}</a></p>
