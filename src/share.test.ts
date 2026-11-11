@@ -372,7 +372,8 @@ describe("handleRequest", () => {
 			mockApi({ result: post() });
 			await get("/post/1?x=1", BOT, { TARGET_ORIGIN: "https://my-dtf.org" }, runtime);
 			await Promise.all(pending);
-			assert.deepEqual([...store.keys()], ["https://s.redtf.org/post/1"]);
+			assert.equal(store.size, 1);
+			assert.match([...store.keys()][0], /^https:\/\/s\.redtf\.org\/post\/1\?v=\d+$/);
 		});
 
 		describe("лимит запросов к DTF", () => {

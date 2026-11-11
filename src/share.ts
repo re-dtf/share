@@ -74,6 +74,11 @@ const POST_PATH = /^\/post\/(\d{1,10})\/?$/;
 const DESCRIPTION_LIMIT = 250;
 /** Сколько ботам и кэшам держать превью, когда пост получить не удалось */
 const ERROR_TTL = 60;
+/**
+ * Версия ключа кэша воркера. Увеличивайте при любом изменении HTML ответа бота:
+ * иначе до конца `CACHE_TTL` будут отдаваться старые страницы (сбросить Cache API извне нельзя).
+ */
+const CACHE_VERSION = 2;
 /** Через сколько боту стоит прийти снова, если сработал лимит запросов к DTF */
 const RETRY_AFTER = 30;
 
@@ -305,7 +310,7 @@ export async function handleRequest(
 	// Адрес шлюза без параметров запроса: он же ключ кэша, поэтому параметры кэш не обходят,
 	// а смена TARGET_ORIGIN и кэш CDN целевого сайта с ним не пересекаются
 	const ogUrl = `${url.origin}/post/${postMatch[1]}`;
-	const cacheKey = new Request(ogUrl);
+	const cacheKey = new Request(`${ogUrl}?v=${CACHE_VERSION}`);
 	const cached = await runtime.cache?.match(cacheKey);
 	if (cached) return cached;
 
